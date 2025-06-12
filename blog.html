@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Prosocial Music Make You More Willing to Help?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: #0f0f23;
+            color: #e2e8f0;
+        }
+        
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        #loneliness-paradox:hover {
+            transform: translateY(-5px);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+            to { box-shadow: 0 0 30px rgba(139, 92, 246, 0.8); }
+        }
+        
+        .diagonal-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        
+        .music-waves {
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(139, 92, 246, 0.1) 2px,
+                rgba(139, 92, 246, 0.1) 4px
+            );
+        }
+        
+        .brain-network {
+            background-image: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+                              radial-gradient(circle at 80% 50%, rgba(236, 72, 153, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 80px 80px;
+        }
+        
+        .data-viz {
+            background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-viz::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .music-visualizer {
+            display: flex;
+            align-items: end;
+            height: 40px;
+            gap: 2px;
+        }
+        
+        .bar {
+            width: 4px;
+            background: linear-gradient(to top, #8b5cf6, #ec4899);
+            border-radius: 2px;
+            animation: bounce 1.5s ease-in-out infinite;
+        }
+        
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.3s; }
+        .bar:nth-child(5) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 100% { height: 10px; }
+            50% { height: 30px; }
+        }
+        
+        /* Interactive elements */
+        .thought-bubble {
+            animation: floatUp 3s ease-out forwards;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(-20px);
+            }
+        }
+        
+        .donation-slider {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(139, 92, 246, 0.2);
+            outline: none;
+        }
+        
+        .donation-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+        
+        .donation-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center diagonal-bg">
+        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div class="relative z-10 text-center px-6 max-w-6xl mx-auto">
+            <div class="floating mb-8">
+                <div class="music-visualizer justify-center mb-6">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+            <h1 class="text-3xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                Can Prosocial Music Make You More Willing to Help?
+            </h1>
+            <p class="text-2xl md:text-2xl text-gray-200 mb-8 font-light">
+                Exploring how prosocial lyrics influence helping willingness through cognitive mechanism
+            </p>
+            <div class="flex justify-center space-x-4">
+                <div class="px-6 py-3 bg-white bg-opacity-10 backdrop-blur rounded-full font-mono text-base">
+                    🧠 Cognitive Science
+                </div>
+                <div class="px-6 py-3 bg-white bg-opacity-10 backdrop-blur rounded-full font-mono text-base">
+                    🎵 Music Effect
+                </div>
+                <div class="px-6 py-3 bg-white bg-opacity-10 backdrop-blur rounded-full font-mono text-base">
+                    ❤️ Prosocial Behavior
+                </div>
+            </div>
+            
+            <!-- Divider line -->
+            <div class="w-32 h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto mt-8 mb-6"></div>
+            
+            <!-- Author info -->
+            <div class="flex justify-center space-x-3 flex-wrap">
+                <div class="px-4 py-2 bg-white bg-opacity-5 backdrop-blur rounded-full font-mono text-sm text-gray-300">
+                    ✍️ Author: Linyi Gao
+                </div>
+                <div class="px-4 py-2 bg-white bg-opacity-5 backdrop-blur rounded-full font-mono text-sm text-gray-300">
+                    🪪 Student ID: 14837471
+                </div>
+                <div class="px-4 py-2 bg-white bg-opacity-5 backdrop-blur rounded-full font-mono text-sm text-gray-300">
+                    👨‍🏫 Lecturer: Rusen Tanribilir
+                </div>
+                <div class="px-4 py-2 bg-white bg-opacity-5 backdrop-blur rounded-full font-mono text-sm text-gray-300">
+                    📅 Date: 13/06/2025
+                </div>
+                <div class="px-4 py-2 bg-white bg-opacity-5 backdrop-blur rounded-full font-mono text-sm text-gray-300">
+                    📊 Word Count: 773
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <!-- Floating music notes -->
+        <div class="absolute top-20 left-10 floating">
+            <i class="fas fa-music text-5xl text-purple-300 opacity-60"></i>
+        </div>
+        <div class="absolute top-32 right-20 floating" style="animation-delay: 1s;">
+            <i class="fas fa-heart text-4xl text-pink-300 opacity-60"></i>
+        </div>
+        <div class="absolute bottom-32 left-20 floating" style="animation-delay: 2s;">
+            <i class="fas fa-brain text-4xl text-blue-300 opacity-60"></i>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="relative bg-slate-900">
+        <div class="absolute inset-0 music-waves opacity-50"></div>
+        
+        <!-- Introduction -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="scroll-reveal">
+                        <div class="card-hover rounded-3xl p-8">
+                            <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                Introduction: Why this matters now
+                            </h2>
+                            <div class="text-xl space-y-4 text-gray-300 leading-relaxed">
+                                <p>We live in a time when many university students feel lonelier than ever—despite being constantly "connected." In the aftermath of the pandemic and amid growing individualism, feelings of social disconnection are on the rise. Even on busy campuses, students often report limited peer support and emotional isolation <sup><a href="#ref1" class="text-purple-400 hover:text-purple-300">[1]</a></sup>.</p>
+                                <p>Meanwhile, music is everywhere. We often think of music as background noise — something to study with, walk with, or cry to on the way home. But what if it could do more than reflect our mood? What if it could subtly shape our actions, like making us more willing to help others?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Illustration: Lonely student -->
+                    <div class="scroll-reveal" style="transition-delay: 0.2s;">
+                       <div class="neon-glow rounded-2xl p-6 mb-8 bg-gradient-to-r from-purple-900/30 to-pink-900/30">
+                           <i class="font-semibold text-purple-200">👉 Research Question:</i>
+                           <h2 class="text-xl text-base mt-2">Does listening to music with prosocial lyrics increase university students' willingness to help others? If so, does it work through activating prosocial thoughts?</h2>
+                           <p class="text-base mt-2 text-gray-400">This is not just about psychology problem, it's about using everyday media to promote a more prosocial society.</p>
+                       </div>
+                        <div class="relative">
+                            <div id="loneliness-paradox" class="card-hover rounded-3xl p-12 text-center brain-network">
+                                <div class="relative">
+                                    <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-5xl text-white"></i>
+                                    </div>
+                                    <div class="absolute -top-4 -right-4 w-16 h-16 bg-red-500 rounded-full flex items-center justify-center pulse-glow">
+                                        <i class="fas fa-wifi-slash text-white"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-purple-200 mb-4">The Loneliness Paradox</h3>
+                                    <div class="grid grid-cols-2 gap-4 text-base">
+                                        <div class="bg-slate-800 rounded-xl p-3">
+                                            <div class="text-2xl font-bold text-red-400">76%</div>
+                                            <div class="text-gray-400">Feel Isolated</div>
+                                        </div>
+                                        <div class="bg-slate-800 rounded-xl p-3">
+                                            <div class="text-2xl font-bold text-yellow-400">84%</div>
+                                            <div class="text-gray-400">Limited Support</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mechanism Section -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        🧩 Understanding the mechanism:</br> 
+                        How music shapes minds
+                    </h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                        To explain how music might influence behavior, the <strong>General Learning Model (GLM) </strong><sup><a href="#ref2" class="text-purple-400 hover:text-purple-300">[2]</a></sup> has been used.
+                    </p>
+                </div>
+
+                <!-- GLM Flow diagram -->
+                <div class="scroll-reveal" style="transition-delay: 0.3s;">
+                    <div class="flex flex-wrap justify-center items-center gap-8 mb-16">
+                        <div class="card-hover rounded-2xl p-6 text-center min-w-[200px] glm-node" onclick="activateGLM(0)">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-music text-3xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-green-300 mb-2">Media Input</h3>
+                            <p class="text-lg text-gray-400">Prosocial lyrics</p>
+                        </div>
+                        
+                        <div class="text-purple-400 text-4xl">→</div>
+                        
+                        <div class="card-hover rounded-2xl p-6 text-center min-w-[200px] glm-node" onclick="activateGLM(1)">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-brain text-3xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-purple-300 mb-2">Cognitive Mechanism</h3>
+                            <p class="text-lg text-gray-400">Prosocial thoughts</p>
+                        </div>
+                        
+                        <div class="text-purple-400 text-4xl">→</div>
+                        
+                        <div class="card-hover rounded-2xl p-6 text-center min-w-[200px] glm-node" onclick="activateGLM(2)">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-pink-500 to-red-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-hand-holding-heart text-3xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-pink-300 mb-2">Behavioral Output</h3>
+                            <p class="text-lg text-gray-400">Helping willingness</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="scroll-reveal" style="transition-delay: 0.5s;">
+                    <div class="card-hover rounded-3xl p-8">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h3 class="text-2xl font-bold text-blue-300 mb-6">Cognitive Accessibility Theory</h3>
+                                <div class="text-xl space-y-4 text-gray-300">
+                                    <p>In this case, <strong>prosocial lyrics</strong> — those promoting kindness, empathy, and helping — might not directly force someone to donate or volunteer, but they <strong>make those ideas more “mentally available".</strong> This process is called <em>cognitive accessibility</em>.</p>
+                                    <p>For example, a line like <em>“lend a helping hand"</em> doesn't demand action. But when heard repeatedly, it may subtly <strong>prime thoughts of generosity</strong>, making helping behavior more likely when the opportunity arises.</p>
+                                    <p>This study focuses specifically on this <strong>cognitive route</strong>. Emotional responses like empathy certainly matter too, but in brief exposure scenarios (like a 30-second song clip), <strong>thoughts may come first, and emotions follow</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <div class="w-64 h-64 mx-auto relative">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full"></div>
+                                    <div class="absolute inset-4 bg-gradient-to-br from-blue-600/30 to-purple-600/30 rounded-full"></div>
+                                    <div class="absolute inset-8 bg-gradient-to-br from-blue-700/40 to-purple-700/40 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-brain text-7xl text-purple-300"></i>
+                                    </div>
+                                    <!-- Thought bubbles -->
+                                    <div class="absolute -top-4 left-12 w-8 h-8 bg-green-500 rounded-full pulse-glow flex items-center justify-center">
+                                        <i class="fas fa-heart text-sm text-white"></i>
+                                    </div>
+                                    <div class="absolute top-8 -right-4 w-6 h-6 bg-yellow-500 rounded-full pulse-glow flex items-center justify-center" style="animation-delay: 0.5s;">
+                                        <i class="fas fa-handshake text-sm text-white"></i>
+                                    </div>
+                                    <div class="absolute -bottom-2 left-8 w-7 h-7 bg-pink-500 rounded-full pulse-glow flex items-center justify-center" style="animation-delay: 1s;">
+                                        <i class="fas fa-donate text-sm text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                        🎧 How I tested it
+                    </h2>
+                    <p class="text-2xl text-gray-300">To find out whether prosocial lyrics really influence helping behavior, we conducted a randomized online experiment with <strong>161 university students</strong>.</p>
+                </div>
+
+                <!-- Study Timeline -->
+                <div class="scroll-reveal mb-16">
+                    <div class="relative">
+                        <div class="flex justify-between relative items-start">
+                            <div class="text-center flex flex-col items-center relative">
+                                <div class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-users text-4xl text-white"></i>
+                                </div>
+                                <h4 class="font-semibold text-cyan-300">Recruitment</h4>
+                                <p class="text-base text-gray-400">161 students</p>
+                                <!-- Connection line to next step -->
+                                <div class="absolute top-12 left-full w-16 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-cyan-500 to-purple-500 z-10"></div>
+                            </div>
+                            <div class="text-center flex flex-col items-center relative">
+                                <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-random text-4xl text-white"></i>
+                                </div>
+                                <h4 class="font-semibold text-purple-300">Random Assignment</h4>
+                                <p class="text-base text-gray-400">2 groups</p>
+                                <!-- Connection line to next step -->
+                                <div class="absolute top-12 left-full w-16 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-purple-500 to-green-500 z-10"></div>
+                            </div>
+                            <div class="text-center flex flex-col items-center relative">
+                                <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-music text-4xl text-white"></i>
+                                </div>
+                                <h4 class="font-semibold text-green-300">Music Exposure</h4>
+                                <p class="text-base text-gray-400">30 seconds</p>
+                                <!-- Connection line to next step -->
+                                <div class="absolute top-12 left-full w-16 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-green-500 to-yellow-500 z-10"></div>
+                            </div>
+                            <div class="text-center flex flex-col items-center relative">
+                                <div class="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-brain text-4xl text-white"></i>
+                                </div>
+                                <h4 class="font-semibold text-yellow-300">Thought Measure</h4>
+                                <p class="text-base text-gray-400">Scale</p>
+                                <!-- Connection line to next step -->
+                                <div class="absolute top-12 left-full w-16 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-yellow-500 to-red-500 z-10"></div>
+                            </div>
+                            <div class="text-center flex flex-col items-center">
+                                <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-euro-sign text-4xl text-white"></i>
+                                </div>
+                                <h4 class="font-semibold text-red-300">Donation Decision</h4>
+                                <p class="text-base text-gray-400">€0-10</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Music comparison -->
+                <div class="scroll-reveal" style="transition-delay: 0.6s;">
+                    <h3 class="text-3xl font-bold text-center text-purple-300 mb-8">What they did:</h3>
+                    <p class="text-center text-gray-300 mb-8">Participants were randomly assigned to hear one of two 30-second music clips:</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="card-hover rounded-3xl p-8 relative overflow-hidden music-card" onclick="toggleMusic('prosocial')" style="background-image: url('https://raw.githubusercontent.com/HaydeeG01/Blog/main/Where%20is%20the%20love'); background-size: cover; background-position: center;">
+                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-3xl font-bold text-red-300">Prosocial Song</h3>
+                                    <i class="fas fa-heart text-4xl text-red-400 floating"></i>
+                                </div>
+                                <div class="bg-slate-800/80 rounded-2xl p-6 mb-6">
+                                    <h4 class="font-semibold text-white mb-2">Where Is the Love?</h4>
+                                    <p class="text-gray-400 text-base">The Black Eyed Peas</p>
+                                </div>
+                                <div class="space-y-2 text-base text-gray-300 mb-6">
+                                    <p class="font-mono"><strong>"</strong>&nbsp;People killin', people dyin'</p>
+                                    <p class="font-mono">&nbsp; Children hurt and you hear them cryin'</p>
+                                    <p class="font-mono">&nbsp; Can you practice what you preach?&nbsp;<strong>"</strong></p>
+                                </div>
+                                <button class="play-button w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-full font-semibold hover:scale-105 transition" id="prosocial-btn">
+                                    <i class="fas fa-play mr-2"></i> Play 30s Clip
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-hover rounded-3xl p-8 relative overflow-hidden music-card" onclick="toggleMusic('neutral')" style="background-image: url('https://raw.githubusercontent.com/HaydeeG01/Blog/main/Myhumps'); background-size: cover; background-position: center;">
+                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-3xl font-bold text-blue-300">Neutral Song</h3>
+                                    <i class="fas fa-music text-4xl text-blue-400 floating" style="animation-delay: 1s;"></i>
+                                </div>
+                                <div class="bg-slate-800/80 rounded-2xl p-6 mb-6">
+                                    <h4 class="font-semibold text-white mb-2">My Humps</h4>
+                                    <p class="text-gray-400 text-base">The Black Eyed Peas</p>
+                                </div>
+                                <div class="space-y-2 text-base text-gray-300 mb-6">
+                                    <p class="font-mono">"&nbsp;My hump, my hump, my hump </p>
+                                    <p class="font-mono">&nbsp; My lovely little lumps</p>
+                                    <p class="font-mono">&nbsp; Check it out &nbsp;"</p>
+                                </div>
+                                <button class="play-button w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-full font-semibold hover:scale-105 transition" id="neutral-btn">
+                                    <i class="fas fa-play mr-2"></i> Play 30s Clip
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Demo -->
+                <div class="mt-12 thoughts-container hidden" id="thoughts-container">
+                    <div class="card-hover rounded-3xl p-8">
+                        <h4 class="text-2xl font-bold text-purple-300 mb-6">Step 1: Activated Thoughts</h4>
+                        <div class="relative min-h-[200px]" id="thought-bubbles"></div>
+                    </div>
+                </div>
+
+                <div class="mt-8 donation-widget hidden" id="donation-widget">
+                    <div class="card-hover rounded-3xl p-8 bg-gradient-to-br from-green-900/20 to-teal-900/20">
+                        <h4 class="text-2xl font-bold text-green-300 mb-6">Step 2: Donation Decision</h4>
+                        <p class="text-gray-300 mb-6">If you received €10, how much would you donate to UNICEF?</p>
+                        <input type="range" min="0" max="10" value="0" class="donation-slider w-full mb-6" id="donation-slider">
+                        <div class="text-5xl font-bold text-green-400 text-center mb-4">€<span id="donation-amount">0</span></div>
+                        <div class="donation-feedback p-4 rounded-xl bg-slate-800 hidden" id="donation-feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-6xl font-bold mb-6 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+                        Key findings: Not what you might expect
+                    </h2>
+                    <p class="text-2xl text-gray-300">At first glance, the results were surprising:</p>
+                </div>
+
+                <!-- Key findings cards -->
+                <div class="grid lg:grid-cols-3 gap-8 mb-16">
+                    <div class="scroll-reveal card-hover rounded-2xl p-6 border-2 border-red-500/30">
+                        <div class="text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-times text-3xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-red-300 mb-3">Direct Effect</h3>
+                            <p class="text-lg text-gray-300 text-base">🎧 Listening to a prosocial song <strong>did not directly increase</strong> people's willingness to donate.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scroll-reveal card-hover rounded-2xl p-6 border-2 border-green-500/30" style="transition-delay: 0.2s;">
+                        <div class="text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-brain text-3xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-green-300 mb-3">Cognitive Effect</h3>
+                            <p class="text-lg text-gray-300 text-base">✅ Prosocial lyrics <strong>did</strong> significantly increase how often people <em>thought</em> about helping.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scroll-reveal card-hover rounded-2xl p-6 border-2 border-blue-500/30" style="transition-delay: 0.4s;">
+                        <div class="text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-link text-3xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-blue-300 mb-3">Indirect Effect</h3>
+                            <p class="text-lg text-gray-300 text-base">✅ And these thoughts, in turn, were strongly linked to donation behavior.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="scroll-reveal">
+                    <div class="card-hover rounded-3xl p-10 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50">
+                        <!-- Summary Section -->
+                        <div class="mb-12">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-check text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-green-300">Key Finding</h3>
+                            </div>
+                            <div class="bg-gradient-to-r from-green-900/20 to-emerald-900/20 rounded-2xl p-6 border border-green-500/30">
+                                <p class="text-xl text-gray-200 leading-relaxed">
+                                    In short, <strong class="text-green-300">the lyrics worked—just not in the way we assumed</strong>. Instead of pushing people to help through emotional appeal, the music <em class="text-emerald-300">primed their thoughts</em>, subtly shifting their mindset toward kindness. This cognitive route aligns with the <strong class="text-green-300">General Learning Model</strong>, which emphasizes how media changes us by activating related concepts in our minds.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Complexity Section -->
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <!-- Main Content -->
+                            <div class="lg:col-span-2">
+                                <div class="flex items-center mb-8">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                                    </div>
+                                    <h3 class="text-3xl font-bold text-yellow-300">Why it's more complicated than it seems</h3>
+                                </div>
+                                
+                                <!-- Suppression Effect -->
+                                <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 rounded-2xl p-6 mb-8 border border-yellow-500/30">
+                                    <div class="flex items-start space-x-4 mb-4">
+                                        <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                            <i class="fas fa-chart-line text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xl font-semibold text-yellow-300 mb-3">Suppression Effect</h4>
+                                            <p class="text-lg text-gray-200 leading-relaxed">
+                                                One of the most interesting findings was a <strong class="text-yellow-300">suppression effect</strong>: after accounting for thoughts, the prosocial lyrics showed a small negative direct impact on willingness to help.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Why Section -->
+                                <div class="mb-8">
+                                    <h4 class="text-2xl font-semibold text-orange-300 mb-6 flex items-center">
+                                        <i class="fas fa-question-circle mr-3"></i>
+                                        Why might that happen?
+                                    </h4>
+                                    
+                                    <div class="space-y-6">
+                                        <!-- Reason 1 -->
+                                        <div class="bg-slate-800/60 rounded-xl p-6 border-l-4 border-red-400">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-shield-alt text-white text-sm"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="text-lg font-semibold text-red-300 mb-2">Psychological Reactance</h5>
+                                                    <p class="text-gray-200 leading-relaxed">
+                                                        Some students may have felt subtly manipulated by the lyrics, triggering <strong class="text-red-300">psychological reactance</strong> — a defensive response to feeling told what to do. Young adults, in particular, tend to resist messages that feel too moralizing or prescriptive.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reason 2 -->
+                                        <div class="bg-slate-800/60 rounded-xl p-6 border-l-4 border-orange-400">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-brain text-white text-sm"></i>
+                                                </div>
+                                                <div>
+                                                    <h5 class="text-lg font-semibold text-orange-300 mb-2">Cognitive Overload</h5>
+                                                    <p class="text-gray-200 leading-relaxed">
+                                                        Others might have experienced <strong class="text-orange-300">cognitive overload</strong>, as <em class="text-yellow-300">Where Is the Love?</em> touches on complex topics like war, inequality, and systemic injustice. In a short 30-second clip, these themes may overwhelm rather than engage, causing some listeners to emotionally shut down or tune out.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Key Insight -->
+                                <div class="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-2xl p-6 border border-purple-500/30">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                            <i class="fas fa-lightbulb text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-lg font-semibold text-purple-300 mb-2">Key Insight</h5>
+                                            <p class="text-purple-200 italic leading-relaxed">
+                                                Prosocial media content should be treated as a subtle catalyst, not a direct command. Its impact depends on clarity, context, and the cognitive load it creates.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Visual Element -->
+                            <div class="lg:col-span-1 flex items-center justify-center">
+                                <div class="relative w-full max-w-xs">
+                                    <div class="relative w-64 h-64 mx-auto">
+                                        <!-- Outer ring -->
+                                        <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-full animate-pulse"></div>
+                                        <!-- Middle ring -->
+                                        <div class="absolute inset-8 bg-gradient-to-br from-yellow-600/30 to-orange-600/30 rounded-full"></div>
+                                        <!-- Inner circle -->
+                                        <div class="absolute inset-16 bg-gradient-to-br from-yellow-700/40 to-orange-700/40 rounded-full flex items-center justify-center">
+                                            <div class="text-center">
+                                                <i class="fas fa-balance-scale text-6xl text-yellow-300 mb-4"></i>
+                                                <h3 class="text-lg font-bold text-yellow-300 mb-2">Complexity</h3>
+                                                <p class="text-sm text-gray-400">Good intentions can backfire</p>
+                                            </div>
+                                        </div>
+                                        <!-- Floating elements -->
+                                        <div class="absolute -top-2 left-8 w-4 h-4 bg-red-500 rounded-full opacity-60 animate-bounce"></div>
+                                        <div class="absolute top-8 -right-2 w-3 h-3 bg-orange-500 rounded-full opacity-60 animate-bounce" style="animation-delay: 0.5s;"></div>
+                                        <div class="absolute -bottom-1 left-12 w-5 h-5 bg-yellow-500 rounded-full opacity-60 animate-bounce" style="animation-delay: 1s;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Limitations -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="scroll-reveal">
+                    <div class="card-hover rounded-3xl p-8">
+                        <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                            🧪 What we still don't know -- Limitation
+                        </h2>
+                        <p class="text-xl text-gray-300 mb-6">While the study confirms a powerful cognitive route, it also opens new questions:</p>
+                        
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="bg-slate-800 rounded-xl p-6">
+                                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-clock text-white"></i>
+                                </div>
+                                <p class="text-lg text-gray-300 text-base">Would a full-length song (or repeated exposure) have a stronger effect than a 30-second clip?</p>
+                            </div>
+                            <div class="bg-slate-800 rounded-xl p-6">
+                                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-globe text-white"></i>
+                                </div>
+                                <p class="text-lg text-gray-300 text-base">Would younger students or non-Western audiences react differently — perhaps with less reactance or more emotional engagement?</p>
+                            </div>
+                            <div class="bg-slate-800 rounded-xl p-6">
+                                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-sync text-white"></i>
+                                </div>
+                                <p class="text-lg text-gray-300 text-base">How do cognition and emotion interact over time — does cognitive activation need to be followed by affective resonance to result in action?</p>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xl text-gray-300 mt-6">Finally, this study only looked at hypothetical behavior. The next step is to measure real-life helping, such as actual volunteering or spontaneous peer support in offline natural settings.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implications -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                        What this means going forward
+                    </h2>
+                    <p class="text-2xl text-gray-300">This study shows that prosocial music has potential—but not as a magic fix. Its power lies in <strong>planting ideas</strong>, not demanding action.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="scroll-reveal card-hover rounded-3xl p-8">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-university text-4xl text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-blue-300">🎓 For Educators</h3>
+                        </div>
+                        <p class="text-lg text-gray-300 text-base">Play prosocial music in shared spaces like cafeterias, libraries, or before class starts—not to push a message, but to set a prosocial tone.</p>
+                    </div>
+
+                    <div class="scroll-reveal card-hover rounded-3xl p-8" style="transition-delay: 0.2s;">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-4xl text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-green-300">📢 For Campaigns</h3>
+                        </div>
+                        <p class="text-lg text-gray-300 text-base">Choose relatable lyrics like "we're all in this together" over preachy messages to avoid triggering reactance.</p>
+                    </div>
+
+                    <div class="scroll-reveal card-hover rounded-3xl p-8" style="transition-delay: 0.4s;">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-microphone text-4xl text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-purple-300">🎶 For Musicians</h3>
+                        </div>
+                        <p class="text-lg text-gray-300 text-base">Keep messages clear and focused. One simple theme works better than multiple complex issues.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="relative z-10 py-20">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="scroll-reveal">
+                    <div class="card-hover rounded-3xl p-12 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10"></div>
+                        <div class="relative z-10 text-center">
+                            <h2 class="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                                Conclusion: The quiet power of a song
+                            </h2>
+                            <p class="text-2xl text-gray-300 mb-8 leading-relaxed max-w-3xl mx-auto">
+                                In a world saturated with messages, subtlety matters. Prosocial lyrics may not shout—but they can whisper ideas that stay. This study reminds us that influence isn't always loud or immediate. Sometimes, the most meaningful change begins with a thought.
+                            </p>
+                            
+                            <!-- Final illustration -->
+                            <div class="relative w-80 h-80 mx-auto mb-8">
+                                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full"></div>
+                                <div class="absolute inset-8 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full"></div>
+                                <div class="absolute inset-16 bg-gradient-to-br from-pink-500/20 to-red-500/20 rounded-full flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-headphones text-7xl text-purple-300 mb-4"></i>
+                                        <div class="w-16 h-1 bg-gradient-to-r from-purple-400 to-pink-400 mx-auto mb-4 rounded-full"></div>
+                                        <i class="fas fa-heart text-5xl text-pink-400"></i>
+                                    </div>
+                                </div>
+                                <!-- Floating musical notes -->
+                                <div class="absolute top-4 left-8 floating">
+                                    <i class="fas fa-music text-purple-300"></i>
+                                </div>
+                                <div class="absolute top-12 right-6 floating" style="animation-delay: 1s;">
+                                    <i class="fas fa-music text-pink-300"></i>
+                                </div>
+                                <div class="absolute bottom-8 left-12 floating" style="animation-delay: 2s;">
+                                    <i class="fas fa-music text-blue-300"></i>
+                                </div>
+                            </div>
+                            
+                            <blockquote class="text-2xl font-light text-purple-200 italic border-l-4 border-purple-400 pl-6">
+                                "Not all messages need to shout. Some just need to sing."
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- References Section -->
+    <section class="relative bg-slate-800 py-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="scroll-reveal">
+                <div class="card-hover rounded-3xl p-8">
+                    <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent text-center">
+                        📚 References
+                    </h2>
+                    <div class="space-y-4 text-gray-300">
+                        <div id="ref1" class="flex items-start space-x-4 p-4 bg-slate-700/50 rounded-xl">
+                            <span class="text-purple-400 font-bold text-xl">[1]</span>
+                            <p class="text-lg leading-relaxed">
+                                American College Health Association. (2021). NCHA-III Fall 2021 Reference Group Executive Summary. https://www.acha.org/wp-content/uploads/2024/07/NCHA-III_FALL_2021_REFERENCE_GROUP_EXECUTIVE_SUMMARY
+                            </p>
+                        </div>
+                        <div id="ref2" class="flex items-start space-x-4 p-4 bg-slate-700/50 rounded-xl">
+                            <span class="text-purple-400 font-bold text-xl">[2]</span>
+                            <p class="text-lg leading-relaxed">
+                                Buckley, K. E., & Anderson, C. A. (2006). A theoretical model of the effects and consequences of playing video games. In P. Vorderer & J. Bryant (Eds.), Playing video games: Motives, responses, and consequences (pp. 363–378). Lawrence Erlbaum Associates.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="flex justify-center items-center mb-6">
+                <div class="music-visualizer">
+                    <div class="bar" style="height: 15px;"></div>
+                    <div class="bar" style="height: 25px;"></div>
+                    <div class="bar" style="height: 20px;"></div>
+                    <div class="bar" style="height: 30px;"></div>
+                    <div class="bar" style="height: 18px;"></div>
+                </div>
+            </div>
+            <p class="text-gray-400 font-mono">
+                Cognitive Science • Music Effect • Prosocial Behavior
+        </div>
+    </footer>
+
+    <!-- Background Music Control -->
+    <div id="background-music-control" class="fixed bottom-6 right-6 z-50">
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-full p-4 border border-purple-500/30 shadow-lg">
+            <button id="bg-music-toggle" class="text-purple-400 hover:text-purple-300 transition-colors" title="背景音乐控制">
+                <i class="fas fa-music text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Background music functionality
+        let backgroundAudio = null;
+        let backgroundMusicEnabled = true;
+        
+        // Initialize background music
+        function initBackgroundMusic() {
+            backgroundAudio = new Audio('https://raw.githubusercontent.com/HaydeeG01/Blog/main/%E3%82%B9%E3%83%BC%E3%83%8F%E3%82%9A%E3%83%BC%E3%83%9E%E3%83%AA%E3%82%AA%E3%82%AD%E3%82%99%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%B7%E3%83%BCBGM%E3%80%90%E5%A4%A9%E6%96%87%E5%8F%B0%E3%81%AE%E3%83%AD%E3%82%BB%E3%82%99%E3%83%83%E3%82%BF2%E3%80%91Rosalina%20in%20the%20Observatory%202%20%5BAIeTgwYbNpI%5D.mp3');
+            backgroundAudio.loop = true;
+            backgroundAudio.volume = 0.3; // 设置较低的音量作为背景音乐
+            
+            // 尝试自动播放
+            const playPromise = backgroundAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Background music started automatically');
+                    updateBackgroundMusicButton(true);
+                }).catch(error => {
+                    console.log('Autoplay prevented, user interaction required');
+                    backgroundMusicEnabled = false;
+                    updateBackgroundMusicButton(false);
+                });
+            }
+        }
+        
+        // Update background music button appearance
+        function updateBackgroundMusicButton(isPlaying) {
+            const button = document.getElementById('bg-music-toggle');
+            const icon = button.querySelector('i');
+            
+            if (isPlaying) {
+                icon.className = 'fas fa-music text-xl';
+                button.classList.add('text-purple-400');
+                button.classList.remove('text-gray-500');
+            } else {
+                icon.className = 'fas fa-music-slash text-xl';
+                button.classList.add('text-gray-500');
+                button.classList.remove('text-purple-400');
+            }
+        }
+        
+        // Toggle background music
+        function toggleBackgroundMusic() {
+            if (!backgroundAudio) return;
+            
+            if (backgroundMusicEnabled && !backgroundAudio.paused) {
+                backgroundAudio.pause();
+                backgroundMusicEnabled = false;
+                updateBackgroundMusicButton(false);
+            } else {
+                const playPromise = backgroundAudio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        backgroundMusicEnabled = true;
+                        updateBackgroundMusicButton(true);
+                    }).catch(error => {
+                        console.error('Failed to play background music:', error);
+                    });
+                }
+            }
+        }
+        
+        // Pause background music when other audio plays
+        function pauseBackgroundMusic() {
+            if (backgroundAudio && backgroundMusicEnabled && !backgroundAudio.paused) {
+                backgroundAudio.pause();
+            }
+        }
+        
+        // Resume background music when other audio stops
+        function resumeBackgroundMusic() {
+            if (backgroundAudio && backgroundMusicEnabled && backgroundAudio.paused) {
+                const playPromise = backgroundAudio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.error('Failed to resume background music:', error);
+                    });
+                }
+            }
+        }
+        
+        // Initialize background music when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initBackgroundMusic();
+            
+            // Add click event to background music toggle button
+            document.getElementById('bg-music-toggle').addEventListener('click', toggleBackgroundMusic);
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // GLM interaction
+        function activateGLM(step) {
+            const nodes = document.querySelectorAll('.glm-node');
+            nodes.forEach((node, index) => {
+                if (index <= step) {
+                    node.classList.add('neon-glow');
+                    setTimeout(() => {
+                        node.classList.remove('neon-glow');
+                    }, 2000);
+                }
+            });
+        }
+
+        // Music player functionality
+        let currentSong = null;
+        let currentAudio = null;
+        let isPlaying = false;
+        
+        // Audio URLs
+        const audioUrls = {
+            prosocial: 'https://raw.githubusercontent.com/HaydeeG01/Blog/main/Black%20Eyed%20Peas-Where%20Is%20The%20Love__%5Bcut_120sec%5D_%5Bcut_30sec%5D.mp3',
+            neutral: 'https://raw.githubusercontent.com/HaydeeG01/Blog/main/Black%20Eyed%20Peas-My%20Humps%20(Album%20Version)_%5Bcut_120sec%5D_%5Bcut_35sec%5D_%5Bcut_30sec%5D.mp3'
+        };
+        
+        function toggleMusic(type) {
+            const prosocialBtn = document.getElementById('prosocial-btn');
+            const neutralBtn = document.getElementById('neutral-btn');
+            
+            // If same song is playing, pause it
+            if (currentAudio && currentSong === type && isPlaying) {
+                currentAudio.pause();
+                isPlaying = false;
+                const activeBtn = type === 'prosocial' ? prosocialBtn : neutralBtn;
+                activeBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Play 30s Clip';
+                return;
+            }
+            
+            // If different song or no song playing, play the new one
+            playMusic(type);
+        }
+        
+        function playMusic(type) {
+            // Pause background music when other audio starts
+            pauseBackgroundMusic();
+            
+            // Stop any currently playing audio
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            
+            currentSong = type;
+            
+            // Update button states
+            const prosocialBtn = document.getElementById('prosocial-btn');
+            const neutralBtn = document.getElementById('neutral-btn');
+            
+            // Reset all buttons first
+            prosocialBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Play 30s Clip';
+            neutralBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Play 30s Clip';
+            
+            // Create and play audio
+            currentAudio = new Audio(audioUrls[type]);
+            currentAudio.volume = 0.7;
+            
+            // Update the clicked button
+            const activeBtn = type === 'prosocial' ? prosocialBtn : neutralBtn;
+            activeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Loading...';
+            
+            currentAudio.addEventListener('loadstart', () => {
+                activeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Loading...';
+            });
+            
+            currentAudio.addEventListener('canplay', () => {
+                activeBtn.innerHTML = '<i class="fas fa-pause mr-2"></i> Playing...';
+                currentAudio.play().then(() => {
+                    isPlaying = true;
+                }).catch(error => {
+                    console.error('Audio play failed:', error);
+                    activeBtn.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Play Failed';
+                    isPlaying = false;
+                });
+            });
+            
+            currentAudio.addEventListener('ended', () => {
+                activeBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Play 30s Clip';
+                currentAudio = null;
+                currentSong = null;
+                isPlaying = false;
+                // Resume background music when clip ends
+                resumeBackgroundMusic();
+            });
+            
+            currentAudio.addEventListener('pause', () => {
+                isPlaying = false;
+                // Resume background music when clip is paused
+                if (!isPlaying) {
+                    resumeBackgroundMusic();
+                }
+            });
+            
+            currentAudio.addEventListener('play', () => {
+                isPlaying = true;
+                // Pause background music when clip plays
+                pauseBackgroundMusic();
+            });
+            
+            currentAudio.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                activeBtn.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Audio Error';
+                // Resume background music on error
+                resumeBackgroundMusic();
+            });
+            
+            // Show thoughts container
+            document.getElementById('thoughts-container').classList.remove('hidden');
+            
+            // Clear and add thought bubbles
+            const thoughtBubbles = document.getElementById('thought-bubbles');
+            thoughtBubbles.innerHTML = '';
+            
+            const thoughts = type === 'prosocial'
+                ? ["I think about helping others", "We should support each other", "Small acts of kindness matter", "Community is important", "Maybe I can do something good today", "It's about connection", "Empathy is key", "We can make a difference"]
+                : ["Nice beat", "Catchy song", "I like this rhythm", "Fun music", "This makes me want to dance", "Just vibing", "Cool melody", "Turn up the volume"];
+            
+            thoughts.forEach((thought, index) => {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'thought-bubble absolute bg-white/10 backdrop-blur rounded-full px-6 py-3 text-base';
+                    bubble.textContent = thought;
+                    bubble.style.left = `${Math.random() * 70}%`;
+                    bubble.style.top = `${Math.random() * 60}%`;
+                    thoughtBubbles.appendChild(bubble);
+                }, index * 500);
+            });
+            
+            // Show donation widget after delay
+            setTimeout(() => {
+                document.getElementById('donation-widget').classList.remove('hidden');
+            }, 3000);
+        }
+        
+        // Donation slider
+        const donationSlider = document.getElementById('donation-slider');
+        const donationAmount = document.getElementById('donation-amount');
+        const donationFeedback = document.getElementById('donation-feedback');
+        
+        donationSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value, 10);
+            donationAmount.textContent = value;
+            
+            // Show feedback
+            donationFeedback.classList.remove('hidden');
+            
+            if (value <= 3) {
+                donationFeedback.innerHTML = '<i class="fas fa-info-circle text-blue-400 mr-2"></i>Every little bit helps. Thank you for your consideration.';
+                donationFeedback.className = 'donation-feedback p-4 rounded-xl bg-blue-900/30 border border-blue-500/30 text-blue-300';
+            } else if (value <= 7) {
+                donationFeedback.innerHTML = '<i class="fas fa-lightbulb text-yellow-400 mr-2"></i>This is a meaningful contribution. You\'re making a positive impact.';
+                donationFeedback.className = 'donation-feedback p-4 rounded-xl bg-yellow-900/30 border border-yellow-500/30 text-yellow-300';
+            } else {
+                donationFeedback.innerHTML = '<i class="fas fa-check-circle text-green-400 mr-2"></i>Wow, that\'s incredibly generous! Your support will make a huge difference.';
+                donationFeedback.className = 'donation-feedback p-4 rounded-xl bg-green-900/30 border border-green-500/30 text-green-300';
+            }
+        });
+    </script>
+</body>
+</html>
+
